@@ -124,7 +124,7 @@ const addTicketsinUser = async(eventId,userId,res,generalTickets,vipTickets) => 
                 process.env.FOLDER_NAME
               );
         ///User ko mail send kardo
-        console.log('QR CODE URL-> ',QRCodeImageUrl)
+        //console.log('QR CODE URL-> ',QRCodeImageUrl)
         // console.log('split method-> ', `data:image/png;base64,${QRCodeURL.split(',')[1]}`)
        
         const emailResponse = await mailSender(
@@ -132,7 +132,7 @@ const addTicketsinUser = async(eventId,userId,res,generalTickets,vipTickets) => 
             `Successfully Purchased ticket of  ${enrolledEvent.title}`,
             ticketConfirmationTemplate(enrolledEvent.title,enrolledEvent.date,enrolledEvent.location,QRCodeImageUrl.secure_url)
         )    
-        console.log("Email Sent Successfully->", emailResponse.response);
+        //console.log("Email Sent Successfully->", emailResponse.response);
         return res.status(200).json({success:true, message:"Payment Verified"});
         }
         catch(error) {

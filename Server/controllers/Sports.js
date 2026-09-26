@@ -35,11 +35,11 @@ exports.createEvent= async(req,res)=>{
         const {date,location,title,price,
             duration,language,artist,type,category,generalSeats,vipSeats}=req.body;
             const image = req.files.image;
-            console.log('Request body: ', req.body);
+            //console.log('Request body: ', req.body);
 
         // console.log('imageUrl ',image);
         // console.log('date ',date);
-        console.log('image ', image);
+        //console.log('image ', image);
         if(!image || !date || !location || !title || !price ||
            !duration || !language || !artist || !type || !category || !generalSeats || !vipSeats
         ){

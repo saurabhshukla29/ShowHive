@@ -32,7 +32,7 @@ export function updateDisplayPicture(token, formData) {
       //   throw new Error(response.data.message)
       // }
     //   toast.success("Display Picture Updated Successfully")
-      console.log('response data -> ',response.data.data);
+      //console.log('response data -> ',response.data.data);
       dispatch(setUser(response.data.data))
     } catch (error) {
       console.log('error ',error);

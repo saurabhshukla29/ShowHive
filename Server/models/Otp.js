@@ -25,7 +25,7 @@ async function sendVerificationEmail(email, otp) {
 			"Verification Email",
 			emailTemplate(otp)
 		);
-		console.log("Email sent successfully: ", mailResponse.response);
+		//console.log("Email sent successfully: ", mailResponse.response);
 	} catch (error) {
 		console.log("Error occurred while sending email: ", error);
 		throw error;
@@ -34,7 +34,7 @@ async function sendVerificationEmail(email, otp) {
 
 
 OTPSchema.pre("save", async function (next) {
-	console.log("New document saved to database");
+	//console.log("New document saved to database");
 
 	if (this.isNew) {
 		await sendVerificationEmail(this.email, this.otp);

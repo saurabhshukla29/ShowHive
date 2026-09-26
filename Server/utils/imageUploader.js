@@ -1,6 +1,6 @@
 const cloudinary = require('cloudinary').v2
 exports.uploadImageToCloudinary = async (file, folder, height, quality) => {
-    console.log("File data:", file); // Log to see what file contains
+    //console.log("File data:", file); // Log to see what file contains
 
     const options = { folder };
     if (height) options.height = height;

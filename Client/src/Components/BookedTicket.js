@@ -18,9 +18,9 @@ const BookedTicket = () => {
       try {
         // console.log('id ',id);
         const id=user._id;
-        console.log('id ',id);
+        //console.log('id ',id);
         const response = await apiConnector("POST", eventEndpoints.GETUSERBOOKEDTICKETS_API, { id }, { Authorization: `Bearer ${token}` }, null, false);
-        console.log("userbooked ",response.data.userBookedTickets.purchasedTickets);
+        //console.log("userbooked ",response.data.userBookedTickets.purchasedTickets);
         setEvents(response.data.userBookedTickets.purchasedTickets);
       } catch (error) { 
         console.log("Error while fetching booked-ticket details", error);

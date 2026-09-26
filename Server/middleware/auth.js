@@ -24,7 +24,7 @@ exports.auth = async (req, res, next) => {
         // console.log('Token without quotes:', token);
         try{
             const decode =  jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decode);
+            //console.log(decode);
             req.user = decode;
         }
         catch(err) {
@@ -32,7 +32,7 @@ exports.auth = async (req, res, next) => {
             console.log('ERR ',err);
             return res.status(401).json({
                 success:false,
-                message:'token is invalid bolte samjah',
+                message:'token is invalid.',
             });
         }
         next();

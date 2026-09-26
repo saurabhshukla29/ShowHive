@@ -43,10 +43,12 @@ export async function buyEvent(token, event, totalAmount,generalTickets,vipTicke
         if(!orderResponse.data.success) {
             throw new Error(orderResponse.data.message);
         }
-        // console.log("PRINTING orderResponse", orderResponse);
+        //console.log("PRINTING orderResponse", orderResponse);
+        //console.log("RZP KEY:", process.env.REACT_APP_RAZORPAY_KEY);
+        //console.log("RZP KEY ORG:", process.env.RAZORPAY_KEY);
         //options
         const options = {
-            key: process.env.RAZORPAY_KEY,
+            key: process.env.REACT_APP_RAZORPAY_KEY,
             currency: orderResponse.data.message.currency,
             amount: `${orderResponse.data.message.amount}`,
             order_id:orderResponse.data.message.id,

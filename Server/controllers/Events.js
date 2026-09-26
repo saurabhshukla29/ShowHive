@@ -58,13 +58,13 @@ if (zone === "PM" && hours !== "12") {
   
   // Convert to UTC
   const formattedDateAndTime = new Date(localDate.toISOString());
-  console.log(formattedDateAndTime); // "2024-11-20T14:00:00.000Z"
+  //console.log(formattedDateAndTime); // "2024-11-20T14:00:00.000Z"
         if( !image || !formattedDateAndTime || !location || !title || !generalSeatPrice || !vipSeatPrice || 
            !duration || !language || !artist || !type || !category || !generalSeats || !vipSeats
         ){
             return res.status(403).json({
                 success:false,
-                message:'All feilds are required bolte'
+                message:'All feilds are required.'
             });
         }
         const imageUrl=await uploadImageToCloudinary(

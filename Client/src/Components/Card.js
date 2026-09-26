@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import './Card.css';
 const CardComp = ({id,title,Img,Location,generalSeatPrice,category}) => {
   const navigate = useNavigate();  // React Router hook for navigation
-  console.log('gen seat price ',generalSeatPrice);
+  //console.log('gen seat price ',generalSeatPrice);
   const handleCardClick = () => {
     // Navigate to the detailed event page
     navigate(`/${category}/${id}`);

@@ -75,8 +75,8 @@ const EventDetail = () => {
       formData.append("duration", duration);
       formData.append("image", imageFile);
       formData.append("organiserId", user._id);
-      console.log("formdata", formData)
-      console.log(formattedDateAndTime);
+      //console.log("formdata", formData)
+      //console.log(formattedDateAndTime);
       // Append image if it exists
       // console.log('image ',formFields.image)
       // if (formFields.image) {

@@ -33,7 +33,7 @@ function EmailModal(props) {
         if (isEmailValid) {
             setIsLoading(true);
             try {
-                const response = await axios.post('http://localhost:8000/api/v1/sendotp', { email });
+                const response = await axios.post(`${endpoints.SENDOTP_API}`, { email });
                 if (response.data.success) {  // Check if OTP sent successfully
                     setIsLoading(false);
                     onNext();  // Show OTP Modal
@@ -86,10 +86,9 @@ function OtpModal({ email, ...props }) {
     const onhandleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log('hi ')
-            console.log('email ',email);
-            console.log('otp ',otp);
-            const response = await axios.post('http://localhost:8000/api/v1/signup', { email, otp });
+            //console.log('email ',email);
+            //console.log('otp ',otp);
+            const response = await axios.post(`${endpoints.SIGNUP_API}`, { email, otp });
             
             if (!response.data.success) {
                 throw new Error(response.data.message)
@@ -105,7 +104,7 @@ function OtpModal({ email, ...props }) {
                 ? response.data.user.image
                 : `https://api.dicebear.com/5.x/initials/svg?seed=Anonymous&USER`
               dispatch(setUser({ ...response.data.user, image: userImage }))
-              console.log('response ',response.data)
+              //console.log('response ',response.data)
               localStorage.setItem("token", JSON.stringify(response.data.token))
               localStorage.setItem("user", JSON.stringify(response.data.user))
               localStorage.setItem("tokenExpirationTime", JSON.stringify(Date.now()+7 * 24 * 60 * 60 * 1000))

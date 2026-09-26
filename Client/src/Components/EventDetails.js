@@ -3,14 +3,12 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from './Card';
-import Categories from './Categories';
 import './EventDetails.css'
 const EventDetails = () => {
   return (
     
     <div className='eventContainer'>
-      <Categories/>
-      <Row>
+      <Row class ='eventContainer-row'>
         <Col lg={3} md={4} sm={6}><Card/></Col>
         <Col lg={3} md={4} sm={6}><Card/></Col>
         <Col lg={3} md={4} sm={6}><Card/></Col>

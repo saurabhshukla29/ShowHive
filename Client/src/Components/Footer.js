@@ -10,18 +10,18 @@ export const Footer = () => {
     <>
       <footer className="footer" >
         <div className="container">
-          <div className="row">
+          <div className="footer-row">
             <div className="footer-col">
               <h4>About</h4>
               <ul>
                 <li>
-                  <a href="/about">about us</a>
+                  <a href="#">About us</a>
                 </li>
                 <li>
-                  <a href="#">our services</a>
+                  <a href="#">Our services</a>
                 </li>
                 <li>
-                  <a href="#">privacy policy</a>
+                  <a href="#">Privacy policy</a>
                 </li>
               </ul>
             </div>
@@ -44,7 +44,7 @@ export const Footer = () => {
               <ul>
                 <li>
                   <a href="mailto:horrorj18@gmail.com?body=fell free to type">
-                    Gmail
+                    Mail
                   </a>
                 </li>
                 <li>
@@ -56,16 +56,16 @@ export const Footer = () => {
               <h4>follow us</h4>
               <div className="social-links">
                 <a
-                  href="https://www.linkedin.com/in/darshan-jaju-73b237223/"
+                  href="https://www.linkedin.com/in/saurabh-shukla-224a50241/"
                   target="blank"
                 >
                   <FaLinkedin className=" mx-auto mt-3 scale-125" />
                 </a>
-                <a href="https://twitter.com/Darshanjaju5" target="blank">
+                <a href="#" target="blank">
                   <FaTwitter className=" mx-auto mt-3 scale-125" />
                 </a>
 
-                <a href="https://www.instagram.com/dj__260/" target="blank">
+                <a href="#" target="blank">
                   <FaInstagram className=" mx-auto mt-3 scale-125" />
                 </a>
               </div>

@@ -17,9 +17,9 @@ const MySalesTicket = () => {
     async function fetchEventDetails() {
       try {
         const id=user._id;
-        console.log(' sales id ',id);
+        //console.log(' sales id ',id);
         const response = await apiConnector("POST", eventEndpoints.GETUSERALLSALES_API, { id }, {Authorization: `Bearer ${token}`,}, null, false);
-        console.log("Organiser response: ", response.data.organiserEvents);
+        //console.log("Organiser response: ", response.data.organiserEvents);
         setEvents(response.data.organiserEvents); // Assuming the response returns an array called organiserEvents
       } catch (error) {
         console.error('Error while fetching event details:', error);

@@ -55,13 +55,13 @@ const Profile = () => {
 
   const handleFileUpload = () => {
     try {
-      console.log("uploading...");
+      //console.log("uploading...");
       // setLoading(true);
       const id=user._id;
       const formData = new FormData();
       formData.append("displayPicture", imageFile);
       formData.append("id", id);
-      console.log("formdata", formData)
+      //console.log("formdata", formData)
       // dispatch(updateDisplayPicture(token, formData))
       dispatch(updateDisplayPicture(token, formData)).then(() => {
         // setLoading(false);
