@@ -98,8 +98,16 @@
   }
   
   .details span {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     font-size: 16px;
     font-weight: bold;
+  }
+
+  .cancelledSection{
+    color : red;
+    font-size: larger;
   }
   
   /* Responsive layout */

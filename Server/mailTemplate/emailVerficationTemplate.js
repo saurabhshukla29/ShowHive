@@ -75,7 +75,7 @@ const otpTemplate = (otp) => {
   <!--Subject: Login Verification Required for Your [App Name] Account-->
   <div class="container">
     <div class="header">
-      <a>Prove Your [App Name] Identity</a>
+      <a>Prove Your ShowHive Identity</a>
     </div>
     <br />
     <strong>Dear User,</strong>
@@ -102,7 +102,7 @@ const otpTemplate = (otp) => {
       <br />
       Best regards,
       <br />
-      <strong>BookMyShow</strong>
+      <strong>ShowHive</strong>
     </p>
 
     <hr style="border: none; border-top: 0.5px solid #131111" />

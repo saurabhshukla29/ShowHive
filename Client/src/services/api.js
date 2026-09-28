@@ -15,6 +15,7 @@ export const eventEndpoints = {
     GETEVENTDETAILS_API:BASE_URL+"/getEventDetails",
     GETUSERALLSALES_API:BASE_URL+"/mySales",
     GETUSERBOOKEDTICKETS_API:BASE_URL+"/bookedTickets",
+    CANCELEVENTBYUSER_API : BASE_URL + "/cancelEventByUser"
 }
 
 export const profileEndpoints = {

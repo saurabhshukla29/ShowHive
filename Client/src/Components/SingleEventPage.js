@@ -34,6 +34,8 @@ const SingleEventPage = (category) => {
       try {
         const response = await apiConnector("POST", eventEndpoints.GETEVENTDETAILS_API, { id }, null, null, false);
         setEvent(response.data.reqEventDetails);
+        console.log("EventId", id);
+        console.log(response.data);
         setGeneralTicketPrice(response.data.reqEventDetails.generalSeatPrice);
         setVipTicketPrice(response.data.reqEventDetails.vipSeatPrice);
       } catch (error) {
@@ -54,6 +56,10 @@ const SingleEventPage = (category) => {
     if (token) {
       buyEvent(token, id, totalAmount,generalTickets,vipTickets,user, navigate, dispatch)
       return
+    }else{
+      alert('To Book the tickets, Please Login.');
+      handleClose();
+      return;
     }
   }
   if (!event) {

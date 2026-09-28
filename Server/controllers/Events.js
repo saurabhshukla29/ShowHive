@@ -1,5 +1,6 @@
 const eventDetails=require('../models/EventDetails');
-const { uploadImageToCloudinary } = require("../utils/imageUploader")
+const User = require('../models/User');
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 exports.getAllEvents= async (req,res)=>{
 
@@ -91,7 +92,7 @@ if (zone === "PM" && hours !== "12") {
 
 exports.getEventDetails= async (req,res)=>{
    try {
-        const {id}=req.body;
+        const { id } = req.body;
         const reqEventDetails=await eventDetails.findById(id);
 
         return res.status(200).json({
@@ -106,3 +107,82 @@ exports.getEventDetails= async (req,res)=>{
     });
    }
 }
+
+
+exports.deleteEvent = async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: "Event id is required.",
+            });
+        }
+
+        const deletedEvent = await eventDetails.findByIdAndDelete(id);
+
+        if (!deletedEvent) {
+            return res.status(404).json({
+                success: false,
+                message: "Event not found.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            deletedEvent,
+            message: "Successfully deleted the event.",
+        });
+    } catch (error) {
+        console.error("deleteEvent error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while deleting the event.",
+        });
+    }
+};
+
+exports.cancelEventByUser = async (req, res) => {
+    try {
+        const { userId, eventId } = req.body;
+
+        if (!userId || !eventId) {
+            return res.status(400).json({
+                success: false,
+                message: "userId and eventId are required.",
+            });
+        }
+
+        const updatedUser = await User.findOneAndUpdate(
+            {
+                _id: userId,
+                "purchasedTickets.eventId": eventId,
+                "purchasedTickets.status" : "Purchased"
+            },
+            {
+                $set: { "purchasedTickets.$.status": "Cancelled" },
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User or ticket for this event not found.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            updatedUser,
+            message: "Successfully cancelled the event for the user.",
+        });
+    } catch (error) {
+        console.error("cancelEventByUser error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong while cancelling the event.",
+        });
+    }
+};

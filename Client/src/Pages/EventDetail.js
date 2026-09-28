@@ -14,6 +14,7 @@ const EventDetail = () => {
   const [selectedType, setSelectedType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [duration, setDuration] = useState('');
+  const [loading, setLoading] = useState(false);
   const { token } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
   const [imageFile, setImageFile] = useState(null);
@@ -50,15 +51,99 @@ const EventDetail = () => {
     
   };
 
+  function Validate(){
+    const location = formFields.location;
+    if(location === '' || location === null){
+      alert('Please enter a location.');
+      return false;
+    }
+
+    const title = formFields.title;
+    if(title === '' || title === null){
+      alert('Please enter a title.');
+      return false;
+    }
+
+    const generalSeatPrice = formFields.generalSeatPrice;
+    if(generalSeatPrice === '' || generalSeatPrice === null || isNaN(generalSeatPrice)){
+      alert('Please enter a numeric value for general seat price.');
+      return false;
+    }
+
+    const vipSeatPrice = formFields.vipSeatPrice;
+    if(vipSeatPrice === '' || vipSeatPrice === null || isNaN(vipSeatPrice)){
+      alert('Please enter a numeric value for VIP seat price.');
+      return false;
+    }
+
+    if(!duration || duration === ''){
+      alert('Please enter a event duration.');
+      return false;
+    }
+
+    const generalSeats = formFields.generalSeats;
+    if(generalSeats === '' || generalSeats === null || isNaN(generalSeats)){
+      alert('Please enter a numeric value for general seat.');
+      return false;
+    }
+
+    const vipSeats = formFields.vipSeats;
+    if(vipSeats === '' || vipSeats === null || isNaN(vipSeats)){
+      alert('Please enter a numeric value for VIP seat.');
+      return false;
+    }
+
+    if(selectedDate === '' || selectedDate === null){
+      alert('Please enter a event date and time.');
+      return false;
+    }
+
+    if(selectedCategory === '' || selectedCategory === null){
+      alert('Please choose a event category.');
+      return false;
+    }
+
+    if(selectedType === '' || selectedType === null){
+      alert('Please choose a event type.');
+      return false;
+    }
+
+    const language = formFields.language;
+    if(language === '' || language === null){
+      alert('Please enter a language.');
+      return false;
+    }
+
+    const artist = formFields.artist;
+    if(artist === '' || artist === null){
+      alert('Please enter a artist.');
+      return false;
+    }
+
+    if(!imageFile){
+      alert('Please enter any event poster.');
+      return false;
+    }
+    
+    return true;
+  }
+
   const handleCreate = async () => {
     try {
+
+      
       const token = localStorage.getItem("token"); // Retrieve token from local storage
   
       if (!token) {
         alert("No token found. Please log in again.");
         return;
       }
-  
+
+      const isValid = Validate();
+      if(!isValid){
+        return;
+      }
+      setLoading(true);
       const formData = new FormData();
       formData.append("location", formFields.location);
       formData.append("title", formFields.title);
@@ -75,7 +160,7 @@ const EventDetail = () => {
       formData.append("duration", duration);
       formData.append("image", imageFile);
       formData.append("organiserId", user._id);
-      //console.log("formdata", formData)
+      console.log("formdata", formData)
       //console.log(formattedDateAndTime);
       // Append image if it exists
       // console.log('image ',formFields.image)
@@ -83,7 +168,7 @@ const EventDetail = () => {
       //   console.log('image ',formFields.image)
       //   formData.append("image", formFields.image);
       // }
-  
+      
       const response = await apiConnector("POST", eventEndpoints.CREATEEVENT_API,formData, {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
@@ -97,6 +182,8 @@ const EventDetail = () => {
     } catch (error) {
       console.error("Error creating event:", error);
       toast.error("Failed to Create Event");
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -211,8 +298,8 @@ const EventDetail = () => {
         </div>
 
         <div className="eventInput" style={{ justifyContent: 'center', alignContent: 'center' }}>
-          <button type="submit" className="btn btn-primary" onClick={handleCreate}>
-            Submit
+          <button type="submit" className="btn btn-primary" onClick={handleCreate} disabled={loading}>
+            {loading ? "Creating..." : "Submit"}
           </button>
         </div>
       </div>

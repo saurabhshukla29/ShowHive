@@ -91,22 +91,50 @@ const addTicketsinUser = async(eventId,userId,res,generalTickets,vipTickets) => 
         return res.status(400).json({success:false,message:"Please Provide data for Courses or UserId"});
     }
         try{
-            //find the course and enroll the student in it
-        const userDetails = await User.findOneAndUpdate(
-            {_id:userId},
-            {$push:{
-                eventDetails:eventId,
-                purchasedTickets: { 
-                    eventId: eventId, 
-                    generalTicketsPurchased: generalTickets, 
-                    vipTicketsPurchased: vipTickets 
-                }}},
-            {new:true},
-        )
+            // first find that, if this user already booked in this event, just update it instead of making
+            // a new entry.
+            // Check if this user already has this event in purchasedTickets
+            const existingTicket = await User.findOne({
+                _id: userId,
+                "purchasedTickets.eventId": eventId,
+            });
 
-        if(!userDetails) {
-            return res.status(500).json({success:false,message:"Course not Found"});
-        }
+            let updatedUser;
+
+            if (existingTicket) {
+                // Update existing entry
+                updatedUser = await User.findOneAndUpdate(
+                    { _id: userId, "purchasedTickets.eventId": eventId },
+                    {
+                        $inc: {
+                            "purchasedTickets.$.generalTicketsPurchased": generalTickets,
+                            "purchasedTickets.$.vipTicketsPurchased": vipTickets,
+                        },
+                    },
+                    { new: true }
+                );
+            } else {
+                // Add new entry
+                updatedUser = await User.findOneAndUpdate(
+                    { _id: userId },
+                    {
+                        $push: {
+                            purchasedTickets: {
+                                eventId,
+                                generalTicketsPurchased: generalTickets,
+                                vipTicketsPurchased: vipTickets,
+                                status: "Purchased",
+                            },
+                        },
+                    },
+                    { new: true }
+                );
+            }
+
+            if(!updatedUser) {
+                return res.status(500).json({success:false,message:"Course not Found"});
+            }
+        
         const enrolledEvent=await EventDetails.findByIdAndUpdate(eventId,
             {
                 $push:{
@@ -128,7 +156,7 @@ const addTicketsinUser = async(eventId,userId,res,generalTickets,vipTickets) => 
         // console.log('split method-> ', `data:image/png;base64,${QRCodeURL.split(',')[1]}`)
        
         const emailResponse = await mailSender(
-            userDetails.email,
+            updatedUser.email,
             `Successfully Purchased ticket of  ${enrolledEvent.title}`,
             ticketConfirmationTemplate(enrolledEvent.title,enrolledEvent.date,enrolledEvent.location,QRCodeImageUrl.secure_url)
         )    

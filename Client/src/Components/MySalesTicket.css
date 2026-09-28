@@ -62,7 +62,7 @@
     color: #495057;
     max-width: 1000px; /* Match card width */
     margin: 0 auto; /* Center the collapse content */
-    transition: transform 0.3s ease;
+    transition: transform 2s ease;
     cursor: pointer;
 }
 

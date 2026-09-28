@@ -28,6 +28,10 @@ const userSchema= new mongoose.Schema({
             vipTicketsPurchased: {
                 type: Number,
                 default: 0
+            },
+            status:{
+                type : String,
+                default : "Purchased"
             }
         }
     ]
