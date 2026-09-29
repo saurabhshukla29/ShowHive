@@ -9,3 +9,35 @@
     row-gap: 2rem;
     justify-content: flex-start ;
 }
+
+/* Pagination.css or add to your existing stylesheet */
+
+.custom-pagination .page-link {
+  border-radius: 50% !important;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 4px;
+  color: #dc3545; /* red text */
+  border: 1px solid #dc3545; /* red border */
+  padding: 0;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #dc3545; /* red background for active page */
+  border-color: #dc3545;
+  color: #fff;
+}
+
+.custom-pagination .page-link:hover {
+  background-color: #f8d7da; /* light red hover */
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  color: #ccc;
+  border-color: #eee;
+}

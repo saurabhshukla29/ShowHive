@@ -8,21 +8,74 @@ import '../Components/EventDetails.css';
 import { eventEndpoints } from '../services/api';
 import { Play } from '../Components/CategoriesList';
 import axios from 'axios';
+import { Pagination } from 'react-bootstrap';
 
 const PlaysDetail = () => {
   const [plays, setPlays] = useState([]);
   const [selectedType, setSelectedType] = useState(null); // To track selected play type
 
+  // Inside your component:
+      const [currentPage, setCurrentPage] = useState(1);
+      const itemsPerPage = 20; // adjust as needed
+    
+    
+      // Calculate pagination values
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentEvents = plays ? plays.slice(indexOfFirstItem, indexOfLastItem) : [];
+      const totalPages = plays ? Math.ceil(plays.length / itemsPerPage) : 0;
+    
+      const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // optional UX nicety
+      };
+    
+      // Reset to page 1 whenever the category/filter changes
+      useEffect(() => {
+        setCurrentPage(1);
+      }, [Play]); // or whatever triggers handleTypeChange
+  
+      const getPageNumbers = (currentPage, totalPages, siblingCount = 1) => {
+    const totalPageNumbers = siblingCount * 2 + 5; // first, last, current, 2 siblings, 2 ellipses
+  
+    // If total pages is small, just show all of them
+    if (totalPages <= totalPageNumbers) {
+      return [...Array(totalPages)].map((_, i) => i + 1);
+    }
+  
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+  
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
+  
+    const pages = [];
+  
+    pages.push(1); // always show first page
+  
+    if (shouldShowLeftDots) pages.push('...');
+  
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+      if (i !== 1 && i !== totalPages) pages.push(i);
+    }
+  
+    if (shouldShowRightDots) pages.push('...');
+  
+    pages.push(totalPages); // always show last page
+  
+    return pages;
+  };
+
   useEffect(() => {
-    // Function to fetch events based on category
+    // Function to fetch plays based on category
     async function fetchEvents(type) {
       try {
         let response;
         if (type) {
-          // Fetch events based on selected category
+          // Fetch plays based on selected category
           response = await axios.get(`${eventEndpoints.GETALLPLAYS_API}?type=${type}`);
         } else {
-          // Fetch all events by default
+          // Fetch all plays by default
           response = await axios.get(eventEndpoints.GETALLPLAYS_API);
         }
   
@@ -32,20 +85,20 @@ const PlaysDetail = () => {
         // Debug current time
         //console.log("Current Timestamp:", currentTime);
   
-        // Filter events with valid date and time
+        // Filter plays with valid date and time
         const validEvents = response.data.getAllEvents.filter(event => {
           //console.log("Event Date and Time :" , event.dateAndTime);
           const eventDateTime = new Date(event.dateAndTime); // Event time in milliseconds
           // Debug event time
           //console.log("Event Timestamp:", eventDateTime);
   
-          return eventDateTime > currentTime; // Keep only future events
+          return eventDateTime > currentTime; // Keep only future plays
         });
   
-        setPlays(validEvents); // Update state with filtered events
-        //console.log("validEvents" , events);
+        setPlays(validEvents); // Update state with filtered plays
+        //console.log("validEvents" , plays);
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error('Error fetching plays:', error);
       }
     }
   
@@ -59,23 +112,51 @@ const PlaysDetail = () => {
 
   return (
     <>
-      <Categories categories={Play} handleTypeChange={handleTypeChange} /> {/* Pass handler for category change */}
-      <Container className='eventContainer'>
-        <Row>
-          {plays && plays.map((play, index) => (
-            <Col lg={3} md={4} sm={6} key={index}>
-              <Card 
-                id={play._id}
-                title={play.title}
-                Img={play.imageUrl}
-                Location={play.location}
-                generalSeatPrice={play.generalSeatPrice}
-                category="plays"
-              />
-            </Col>
-          ))}
-        </Row>
-      </Container>
+      <Categories categories={Play} handleTypeChange={handleTypeChange} />
+        <Container className='eventContainer'>
+          <Row>
+            {currentEvents.map((plays, index) => (
+              <Col lg={3} md={4} sm={6} key={plays._id || index}>
+                <Card 
+                  id={plays._id}
+                  title={plays.title}
+                  Img={plays.imageUrl}
+                  Location={plays.location}
+                  generalSeatPrice={plays.generalSeatPrice}
+                  category="plays"
+                />
+              </Col>
+            ))}
+          </Row>
+
+          {totalPages > 1 && (
+            <Pagination className="justify-content-center mt-4 custom-pagination">
+                          <Pagination.Prev 
+                            onClick={() => handlePageChange(currentPage - 1)} 
+                            disabled={currentPage === 1} 
+                          />
+            
+                          {getPageNumbers(currentPage, totalPages).map((page, idx) =>
+                            page === '...' ? (
+                              <Pagination.Ellipsis key={`dots-${idx}`} disabled />
+                            ) : (
+                              <Pagination.Item
+                                key={page}
+                                active={page === currentPage}
+                                onClick={() => handlePageChange(page)}
+                              >
+                                {page}
+                              </Pagination.Item>
+                            )
+                          )}
+            
+                          <Pagination.Next 
+                            onClick={() => handlePageChange(currentPage + 1)} 
+                            disabled={currentPage === totalPages} 
+                          />
+                        </Pagination>
+          )}
+        </Container>
     </>
   );
 };
