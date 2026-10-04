@@ -32,17 +32,17 @@ const BookedTicket = () => {
 
   const handleShow = (index) => setOpenModalIndex(index);
   const handleClose = () => setOpenModalIndex(null);
-  if(events.length===0){
+  if(events.length === 0){
     return(
       <>
-        You have not Booked Any Tickets yet;
+        You have not Booked Any Tickets yet.
       </>
     );
   }
 
     const handleCancel = async (eventId) => {
       try {
-        if(!window.confirm("Do you want to cancel this ticket.")){
+        if(!window.confirm("Do you want to cancel this ticket. You will get the Penalty of 10%.")){
           return;
         }
         const token = localStorage.getItem("token"); // Retrieve token from local storage
@@ -91,7 +91,7 @@ const BookedTicket = () => {
                 </Button>
                 )}
                 {event.status === "Purchased" && (
-                    <Button onClick={() => handleCancel(event.eventId)}>
+                    <Button onClick={() => handleCancel(event.eventId._id)}>
                       Cancel Ticket
                     </Button>
                   )}

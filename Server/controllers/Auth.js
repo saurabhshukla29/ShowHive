@@ -38,7 +38,7 @@ exports.SignUp= async (req,res)=>{
 				{ email: user.email, id: user._id},
 				process.env.JWT_SECRET,
 				{
-					expiresIn: "7d",
+					expiresIn: "1d",
 				}
 			);
 			// console.log('token created-> ',token);

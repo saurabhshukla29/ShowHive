@@ -43,3 +43,5 @@ app.use("/api/v1/payment", paymentRoutes);
 app.listen(Port,()=>{
     console.log(`App is running at port ${Port}`);
 })
+
+module.exports = app;

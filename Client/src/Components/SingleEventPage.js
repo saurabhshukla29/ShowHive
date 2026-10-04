@@ -23,10 +23,16 @@ const SingleEventPage = (category) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [generalTicketPrice,setGeneralTicketPrice]=useState(0);
   const [vipTicketPrice,setVipTicketPrice]=useState(0);
+  const [totalGeneralTickets,setTotalGeneralTickets]=useState(0);
+  const [generalTicketsSold,setGeneralTicketsSold]=useState(0);
+  const [totalVIPTicekts,setTotalVIPTickets]=useState(0);
+  const [VIPTicketsSold,setVIPTicketsSold]=useState(0);
   // Handlers for incrementing/decrementing ticket counts
-  const incrementGeneralTickets = () => setGeneralTickets((prev) => Math.min(prev + 1, 10));
+  const totalGenSeatsAvailable = totalGeneralTickets - generalTicketsSold;
+  const totalVIPSeatsAvailable = totalVIPTicekts - VIPTicketsSold;
+  const incrementGeneralTickets = () => setGeneralTickets((prev) => Math.min(prev + 1, Math.min(totalGenSeatsAvailable, 10)));
   const decrementGeneralTickets = () => setGeneralTickets((prev) => Math.max(prev - 1, 0));
-  const incrementVipTickets = () => setVipTickets((prev) => Math.min(prev + 1, 10));
+  const incrementVipTickets = () => setVipTickets((prev) => Math.min(prev + 1, Math.min(totalVIPSeatsAvailable, 10)));
   const decrementVipTickets = () => setVipTickets((prev) => Math.max(prev - 1, 0));
 
   useEffect(() => {
@@ -34,10 +40,16 @@ const SingleEventPage = (category) => {
       try {
         const response = await apiConnector("POST", eventEndpoints.GETEVENTDETAILS_API, { id }, null, null, false);
         setEvent(response.data.reqEventDetails);
-        console.log("EventId", id);
-        console.log(response.data);
+        //console.log("EventId", id);
+        //console.log(response.data);
         setGeneralTicketPrice(response.data.reqEventDetails.generalSeatPrice);
         setVipTicketPrice(response.data.reqEventDetails.vipSeatPrice);
+        setTotalGeneralTickets(response.data.reqEventDetails.generalSeats);
+        setGeneralTicketsSold(response.data.reqEventDetails.generalTicketsSold);
+        setTotalVIPTickets(response.data.reqEventDetails.vipSeats);
+        setVIPTicketsSold(response.data.reqEventDetails.vipTicketsSold);
+        //console.log("VIP Seats",response.data.reqEventDetails.vipSeats);
+        //console.log("VIP Tickets Sold", response.data.reqEventDetails.vipTicketsSold);
       } catch (error) {
         console.error('Error fetching event details:', error);
       }

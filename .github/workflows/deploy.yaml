@@ -1,0 +1,79 @@
+name: Build and Deploy ShowHive
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install server dependencies
+        working-directory: ./Server
+        run: npm ci
+
+      - name: Run server tests
+        working-directory: ./Server
+        run: npm test
+
+      - name: Install client dependencies
+        working-directory: ./Client
+        run: npm ci
+
+      - name: Run client tests
+        working-directory: ./Client
+        run: npm test -- --watchAll=false
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push server image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Server
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/showhive-server:latest
+
+      - name: Build and push client image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Client
+          push: true
+          build-args: |
+            REACT_APP_BASE_URL=${{ secrets.REACT_APP_BASE_URL }}
+            REACT_APP_RAZORPAY_KEY=${{ secrets.REACT_APP_RAZORPAY_KEY }}
+          tags: ghcr.io/${{ github.repository_owner }}/showhive-client:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into VM and redeploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            cd ~/showhive
+            docker compose pull
+            docker compose up -d

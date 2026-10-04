@@ -97,6 +97,7 @@ const addTicketsinUser = async(eventId,userId,res,generalTickets,vipTickets) => 
             const existingTicket = await User.findOne({
                 _id: userId,
                 "purchasedTickets.eventId": eventId,
+                "purchasedTickets.status" : "Purchased"
             });
 
             let updatedUser;
@@ -104,7 +105,8 @@ const addTicketsinUser = async(eventId,userId,res,generalTickets,vipTickets) => 
             if (existingTicket) {
                 // Update existing entry
                 updatedUser = await User.findOneAndUpdate(
-                    { _id: userId, "purchasedTickets.eventId": eventId },
+                    { _id: userId, "purchasedTickets.eventId": eventId, 
+                        "purchasedTickets.status" : "Purchased" },
                     {
                         $inc: {
                             "purchasedTickets.$.generalTicketsPurchased": generalTickets,

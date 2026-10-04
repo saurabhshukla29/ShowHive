@@ -1,6 +1,8 @@
 const eventDetails=require('../models/EventDetails');
 const User = require('../models/User');
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
+const mongoose = require('mongoose');
+
 
 exports.getAllEvents= async (req,res)=>{
 
@@ -93,7 +95,7 @@ if (zone === "PM" && hours !== "12") {
 exports.getEventDetails= async (req,res)=>{
    try {
         const { id } = req.body;
-        const reqEventDetails=await eventDetails.findById(id);
+        const reqEventDetails = await eventDetails.findById(id);
 
         return res.status(200).json({
             success:true,
@@ -144,16 +146,19 @@ exports.deleteEvent = async (req, res) => {
 };
 
 exports.cancelEventByUser = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
     try {
         const { userId, eventId } = req.body;
 
         if (!userId || !eventId) {
-            return res.status(400).json({
-                success: false,
-                message: "userId and eventId are required.",
-            });
+            throw new Error("User not found");
+            // return res.status(400).json({
+            //     success: false,
+            //     message: "userId and eventId are required.",
+            // });
         }
-
+        
         const updatedUser = await User.findOneAndUpdate(
             {
                 _id: userId,
@@ -163,15 +168,58 @@ exports.cancelEventByUser = async (req, res) => {
             {
                 $set: { "purchasedTickets.$.status": "Cancelled" },
             },
-            { new: true }
+            { new: true , session}
         );
 
         if (!updatedUser) {
-            return res.status(404).json({
-                success: false,
-                message: "User or ticket for this event not found.",
-            });
+            throw new Error("User not found");
+            // return res.status(404).json({
+            //     success: false,
+            //     message: "User or ticket for this event not found.",
+            // });
         }
+        const ticket = updatedUser.purchasedTickets.find(
+            (t) => t.eventId.toString() === eventId.toString()
+        );
+
+        if (!ticket) {
+            throw new Error("Ticket not found");
+            // return res.status(404).json({
+            //     success: false,
+            //     message: "Ticket for this event not found.",
+            // });
+        }
+
+        const generalSeatsPur = ticket.generalTicketsPurchased;
+        const vipSeatsPur = ticket.vipTicketsPurchased;
+
+        const updatedEvent = await eventDetails.findOneAndUpdate(
+            {
+                _id: eventId,
+            },
+            {
+                $inc: { 
+                    generalTicketsSold : -generalSeatsPur,
+                    vipTicketsSold : -vipSeatsPur
+                },
+                $pull: {
+                    userEnrolled: userId, // adjust field name to match your actual schema
+                },
+            },
+            { new: true , session}
+        );
+
+         if (!updatedEvent) {
+            throw new Error("Event not found");
+            // return res.status(404).json({
+            //     success: false,
+            //     message: "Event does not found for this User but event cancelled successfully.",
+            // });
+        }
+
+        // If we reach here, both succeeded — commit
+        await session.commitTransaction();
+        session.endSession();
 
         return res.status(200).json({
             success: true,
@@ -179,6 +227,9 @@ exports.cancelEventByUser = async (req, res) => {
             message: "Successfully cancelled the event for the user.",
         });
     } catch (error) {
+         // Something failed — roll back both changes
+        await session.abortTransaction();
+        session.endSession();
         console.error("cancelEventByUser error:", error);
         return res.status(500).json({
             success: false,
