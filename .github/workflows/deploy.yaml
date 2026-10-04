@@ -23,6 +23,14 @@ jobs:
       - name: Run server tests
         working-directory: ./Server
         run: npm test
+        env:
+          RAZORPAY_KEY: ${{ secrets.RAZORPAY_KEY }}
+          RAZORPAY_SECRET: ${{ secrets.RAZORPAY_SECRET }}
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
 
       - name: Install client dependencies
         working-directory: ./Client
