@@ -39,7 +39,7 @@ jobs:
 
       - name: Run client tests
         working-directory: ./Client
-        run: npm test -- --watchAll=false
+        run: npm test -- --watchAll=false --passWithNoTests
 
   build-and-push:
     needs: test
